@@ -1,6 +1,5 @@
 {
 	"Class" : "systems.coyote.WebServer",
-	
 	"Port": 80,
 	
 	"Auth": {

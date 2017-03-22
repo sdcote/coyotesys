@@ -12,13 +12,24 @@
 package systems.coyote;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
+import coyote.commons.StringUtil;
 import coyote.commons.Version;
+import coyote.commons.network.MimeType;
+import coyote.commons.network.http.HTTP;
 import coyote.commons.network.http.HTTPD;
+import coyote.commons.network.http.IHTTPSession;
+import coyote.commons.network.http.Response;
+import coyote.commons.network.http.SecurityResponseException;
+import coyote.commons.network.http.Status;
 import coyote.commons.network.http.auth.GenericAuthProvider;
 import coyote.commons.network.http.handler.HTTPDRouter;
 import coyote.commons.network.http.handler.ResourceHandler;
 import coyote.dataframe.DataField;
+import coyote.dataframe.DataFrame;
 import coyote.dataframe.DataFrameException;
 import coyote.loader.AbstractLoader;
 import coyote.loader.ConfigTag;
@@ -37,18 +48,44 @@ import systems.coyote.handler.StatBoardHandler;
  * 
  * <p>This is a specialization of a Loader which loads a HTTP server and keeps
  * it running in memory.
+ * 
+ * <p>As an extension of the AbstractLoader, this also support the loading of 
+ * components, all of which will have a reference to this loader/webserver so 
+ * it can use this as a coordination point for operations if necessary.
  */
 public class WebServer extends AbstractLoader {
   /** Tag used in various class identifying locations. */
-  public static final String CLASS = WebServer.class.getSimpleName();
+  public static final String NAME = WebServer.class.getSimpleName();
 
+  /** The default port on which this listens */
   private static final int DEFAULT_PORT = 80;
 
-  private static final String PORT = "Port";
-
+  /** Our main server */
   private HTTPDRouter server = null;
 
+  /** Server on a normal port which sends a redirect to our main server. (E.g., any http: requests are redirected to https:) */
+  private HTTPD redirectServer = null;
+
+  /** The version of this server. */
   public static final Version VERSION = new Version( 0, 0, 1, Version.EXPERIMENTAL );
+
+  // the port on which this server listens, defaults to 80
+  private static final String PORT = "Port";
+
+  // Perform a redirect for all requests to this port to the port on which we are listening. Normally set to 80 when the port is 443
+  private static final String REDIRECT_PORT = "RedirectPort";
+
+  // indicates SSL should be enabled; automatically enable when port=443
+  private static final String SECURESERVER = "SecureServer";
+
+  private static final String ENABLE_ARM = "EnableARM";
+  private static final String ENABLE_GAUGES = "EnableGauges";
+  private static final String ENABLE_TIMING = "EnableTiming";
+
+  // mapping attributes
+  private static final String MAPPINGS = "Mappings";
+  private static final String CLASS = "Class";
+  private static final String PRIORITY = "Priority";
 
 
 
@@ -61,6 +98,7 @@ public class WebServer extends AbstractLoader {
     super.configure( cfg );
 
     int port = DEFAULT_PORT;
+    int redirectport = 0;
 
     // we need to get the port first as part of the server constructor
     if ( cfg != null ) {
@@ -72,13 +110,20 @@ public class WebServer extends AbstractLoader {
             port = DEFAULT_PORT;
             Log.error( "Port configuration option was not a valid integer, using default" );
           }
+        } else if ( REDIRECT_PORT.equalsIgnoreCase( field.getName() ) ) {
+          try {
+            redirectport = Integer.parseInt( field.getStringValue() );
+          } catch ( NumberFormatException e ) {
+            redirectport = 0;
+            Log.error( "RedirectPort configuration option was not a valid integer, ignoring" );
+          }
         }
       }
     }
 
     boolean secureServer;
     try {
-      secureServer = cfg.getAsBoolean( "SecureServer" );
+      secureServer = cfg.getAsBoolean( SECURESERVER );
     } catch ( DataFrameException e1 ) {
       secureServer = false;
     }
@@ -94,7 +139,7 @@ public class WebServer extends AbstractLoader {
       }
     }
 
-    // Add the default routs to ensure basic operation
+    // Add the default routes to ensure basic operation
     server.addDefaultRoutes();
 
     // remove the root handlers, we'll use ours below
@@ -110,10 +155,19 @@ public class WebServer extends AbstractLoader {
     server.addRoute( "/", Integer.MAX_VALUE, ResourceHandler.class, "content" );
     server.addRoute( "/(.)+", Integer.MAX_VALUE, ResourceHandler.class, "content" );
 
+    List<Config> mapsections = configuration.getSections( MAPPINGS );
+    for ( Config section : mapsections ) {
+      for ( DataField field : section.getFields() ) {
+        if ( field.getName() != null && field.isFrame() ) {
+          loadMapping( field.getName(), new Config( (DataFrame)field.getObjectValue() ) );
+        }
+      }
+    }
+
     if ( cfg != null ) {
-      Config section = cfg.getSection( GenericAuthProvider.AUTH_SECTION );
-      if ( section != null ) {
-        server.setAuthProvider( new GenericAuthProvider( section ) );
+      Config sectn = cfg.getSection( GenericAuthProvider.AUTH_SECTION );
+      if ( sectn != null ) {
+        server.setAuthProvider( new GenericAuthProvider( sectn ) );
       }
 
       // configure the IPACL with any found configuration data; 
@@ -131,22 +185,85 @@ public class WebServer extends AbstractLoader {
         activate( wedge, cfg ); // activate it
       }
 
-      // Now configure the server
-
       // configure the server to use our statistics board
       server.setStatBoard( getStats() );
 
-      // TODO: Make these configurable
-      getStats().enableArm( true );
-      getStats().enableGauges( true );
-      getStats().enableTiming( true );
-      getStats().setVersion( CLASS, VERSION );
+      // Configure the statistics board to enable collecting metrics
+      try {
+        getStats().enableArm( cfg.getAsBoolean( ENABLE_ARM ) );
+      } catch ( DataFrameException e ) {
+        getStats().enableArm( false );
+      }
+      try {
+        getStats().enableGauges( cfg.getAsBoolean( ENABLE_GAUGES ) );
+      } catch ( DataFrameException e ) {
+        getStats().enableGauges( false );
+      }
+      try {
+        getStats().enableTiming( cfg.getAsBoolean( ENABLE_TIMING ) );
+      } catch ( DataFrameException e ) {
+        getStats().enableTiming( false );
+      }
 
-      // go through each of the mappings and set the given handler in place
-      // with its configuration
+      // Set our version in the stats board
+      getStats().setVersion( NAME, VERSION );
 
+      if ( redirectport > 0 ) {
+        redirectServer = new RedirectServer( redirectport );
+      }
+
+      Log.info( "Configured server with " + server.getMappings().size() + " mappings" );
     }
 
+  }
+
+
+
+
+  /**
+   * Load the mapping represented in the given configuration into the server.
+   * 
+   * <p>Init Parameter:<ol><li>this server<li>configuration
+   * 
+   * @param route the route regex to map in the router
+   * @param config the configuration of the route handler with at least a class attribute
+   */
+  private void loadMapping( String route, Config config ) {
+    // if we have a route
+    if ( StringUtil.isNotEmpty( route ) ) {
+      // pull out the class name
+      String className = config.getString( CLASS );
+
+      // get the priority of the routing
+      int priority = 0;
+      if ( config.contains( PRIORITY ) ) {
+        try {
+          priority = config.getAsInt( PRIORITY );
+        } catch ( DataFrameException e ) {
+          Log.warn( "Problems parsing mapping priority into a numeric value for rout '" + route + "' using default" );
+        }
+      }
+
+      // If we found a class to map to the route
+      if ( StringUtil.isNotBlank( className ) ) {
+        try {
+          // load the class
+          Class<?> clazz = Class.forName( className );
+          Log.info( "Loading " + className + " to handle requests for '" + route + "'" );
+          if ( priority > 0 ) {
+            server.addRoute( route, priority, clazz, this, config );
+          } else {
+            server.addRoute( route, clazz, this, config );
+          }
+        } catch ( Exception e ) {
+          Log.warn( "Problems adding route mapping '" + route + "', handler: " + className + " Reason:" + e.getClass().getSimpleName() );
+        }
+      } else {
+        Log.warn( "No class defined in mapping for '" + route + "' - " + config );
+      }
+    } else {
+      Log.warn( "No route specified in mapping for " + config );
+    }
   }
 
 
@@ -173,11 +290,20 @@ public class WebServer extends AbstractLoader {
       System.exit( 1 );
     }
 
+    if ( redirectServer != null ) {
+      try {
+        redirectServer.start( HTTPD.SOCKET_READ_TIMEOUT, false );
+      } catch ( IOException ioe ) {
+        Log.append( HTTPD.EVENT, "ERROR: Could not start redirection server on port '" + redirectServer.getPort() + "' - " + ioe.getMessage() );
+        System.err.println( "Couldn't start redirection server:\n" + ioe );
+      }
+    }
+
     // Save the name of the thread that is running this class
     final String oldName = Thread.currentThread().getName();
 
     // Rename this thread to the name of this class
-    Thread.currentThread().setName( CLASS );
+    Thread.currentThread().setName( NAME );
 
     // very important to get park(millis) to operate
     current_thread = Thread.currentThread();
@@ -189,7 +315,7 @@ public class WebServer extends AbstractLoader {
 
     // By this time all loggers (including the catch-all logger) should be
     // open
-    final StringBuffer b = new StringBuffer( CLASS );
+    final StringBuffer b = new StringBuffer( NAME );
     b.append( " v" );
     b.append( VERSION.toString() );
     b.append( " initialized - Loader:" );
@@ -243,9 +369,12 @@ public class WebServer extends AbstractLoader {
     // call the threadjob shutdown to exit the watchdog routine
     super.shutdown();
 
-    // shutdown the server
+    // shutdown the servers
     if ( server != null ) {
       server.stop();
+    }
+    if ( redirectServer != null ) {
+      redirectServer.stop();
     }
   }
 
@@ -281,6 +410,74 @@ public class WebServer extends AbstractLoader {
 
     @Override
     public void terminate() {}
+
+  }
+
+  /**
+   * Listens on a particular port and sends a redirect for the same URL to the 
+   * secure port.
+   */
+  private class RedirectServer extends HTTPD {
+    private static final String HTTP_SCHEME = "http://";
+    private static final String HTTPS_SCHEME = "https://";
+
+
+
+
+    public RedirectServer( int port ) {
+      super( port );
+    }
+
+
+
+
+    /**
+     * Perform a case insensitive search for a header with a given name and 
+     * return its value if found.
+     * 
+     * @param name the name of the request header to query
+     * @param session the session containing the request headers
+     * 
+     * @return the value in the header or null if that header was not found in 
+     *         the session.
+     */
+    private String findRequestHeaderValue( String name, IHTTPSession session ) {
+      if ( StringUtil.isNotBlank( name ) && session != null && session.getRequestHeaders() != null ) {
+        final Set<Map.Entry<String, String>> entries = session.getRequestHeaders().entrySet();
+        for ( Map.Entry<String, String> header : entries ) {
+          if ( name.equalsIgnoreCase( header.getKey() ) )
+            return header.getValue();
+        }
+      }
+      return null;
+    }
+
+
+
+
+    /**
+     * Take what ever URI was requested and send a 301 (moved permanently) 
+     * response with the new url.
+     *  
+     * @see coyote.commons.network.http.HTTPD#serve(coyote.commons.network.http.IHTTPSession)
+     */
+    @Override
+    public Response serve( IHTTPSession session ) throws SecurityResponseException {
+      String host = findRequestHeaderValue( HTTP.HDR_HOST, session );
+      if ( StringUtil.isNotBlank( host ) ) {
+        String uri;
+        if ( server.getPort() == 443 ) {
+          uri = HTTPS_SCHEME + host + session.getUri();
+        } else {
+          uri = HTTP_SCHEME + host + ":" + server.getPort() + session.getUri();
+        }
+        Log.append( HTTPD.EVENT, "Redirecting to " + uri );
+        Response response = Response.createFixedLengthResponse( Status.REDIRECT, MimeType.HTML.getType(), "<html><body>Moved: <a href=\"" + uri + "\">" + uri + "</a></body></html>" );
+        response.addHeader( HTTP.HDR_LOCATION, uri );
+        return response;
+      }
+      return super.serve( session );
+    }
 
   }
 
