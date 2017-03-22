@@ -17,7 +17,8 @@
 	},
 		
 	"Mappings" : {
-		"api/contact" : { "Class" : "systems.coyote.handler.ContactHandler", "Priority" : 32767 }
+		"api/contact" : { "Class" : "systems.coyote.handler.ContactHandler", "Priority" : 32767 },
+		"blog/(.)+" : { "Class" : "systems.coyote.handler.BlogHandler", "root":"content/blog" }
 	},
 	
 	"Components": [
