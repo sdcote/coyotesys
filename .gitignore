@@ -59,5 +59,9 @@ logback.xml
 *.jar
 *.war
 *.ear
+
+# Eexceptions #
+##############
 !gradle/wrapper/gradle-wrapper.jar
+!lib/**/*
 
