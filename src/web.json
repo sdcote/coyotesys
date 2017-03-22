@@ -17,7 +17,7 @@
 	},
 		
 	"Mappings" : {
-		"api/cmd/:cmd" : { "Class" : "coyote.sdc.handler.Command", "Priority" : 32767 }
+		"api/contact" : { "Class" : "coyote.sdc.handler.ContactHandler", "Priority" : 32767 }
 	},
 	
 	"Components": [
