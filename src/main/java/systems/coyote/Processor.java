@@ -9,7 +9,7 @@
  *   Stephan D. Cote 
  *      - Initial concept and implementation
  */
-package coyote.sdc;
+package systems.coyote;
 
 import coyote.loader.cfg.Config;
 import coyote.loader.component.AbstractManagedComponent;
@@ -27,7 +27,7 @@ import coyote.loader.log.Log;
  * <p>All components have a reference to its loader and can perform operations 
  * using the loader as its configuration point.
  */
-public class MyProcessor extends AbstractManagedComponent implements ManagedComponent {
+public class Processor extends AbstractManagedComponent implements ManagedComponent {
   private static final String INITIALIZING = "Initializing";
   private static final String INITIALIZED = "Initialized";
   private static final String RUNNING = "Running";
@@ -40,7 +40,7 @@ public class MyProcessor extends AbstractManagedComponent implements ManagedComp
 
 
 
-  public MyProcessor() {}
+  public Processor() {}
 
 
 

@@ -9,7 +9,7 @@
  *   Stephan D. Cote 
  *      - Initial concept and initial implementation
  */
-package coyote.sdc.handler;
+package systems.coyote.handler;
 
 import java.net.InetAddress;
 import java.util.Iterator;

@@ -1,5 +1,5 @@
 {
-	"Class" : "coyote.sdc.MyServer",
+	"Class" : "systems.coyote.WebServer",
 	
 	"Port": 80,
 	
@@ -9,7 +9,8 @@
 			  "EncryptedPassword" : "6ntFRYIIv7wyh75cRgqlNzgAdPz/K2mz", 
 			  "EncryptedGroups" : "0HR3uyUplj+VLJTNJTyyUh1VuD36N6nJ0gAADuFsHVENVTBmspLMs0gkTdMFuOYF"
 			}
-		]
+		],
+		"AllowUnsecuredConnections" : true
 	},
 	
 	"IPACL" : {
@@ -17,11 +18,11 @@
 	},
 		
 	"Mappings" : {
-		"api/contact" : { "Class" : "coyote.sdc.handler.ContactHandler", "Priority" : 32767 }
+		"api/contact" : { "Class" : "systems.coyote.handler.ContactHandler", "Priority" : 32767 }
 	},
 	
 	"Components": [
-		{"Class": "coyote.sdc.MyProcessor"}
+		{"Class": "systems.coyote.Processor"}
 	],
 	
 		

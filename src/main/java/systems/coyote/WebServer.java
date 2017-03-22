@@ -9,7 +9,7 @@
  *   Stephan D. Cote 
  *      - Initial concept and implementation
  */
-package coyote.sdc;
+package systems.coyote;
 
 import java.io.IOException;
 
@@ -29,7 +29,7 @@ import coyote.loader.component.AbstractManagedComponent;
 import coyote.loader.component.ManagedComponent;
 import coyote.loader.log.Log;
 import coyote.loader.log.LogMsg;
-import coyote.sdc.handler.StatBoardHandler;
+import systems.coyote.handler.StatBoardHandler;
 
 
 /**
@@ -38,9 +38,9 @@ import coyote.sdc.handler.StatBoardHandler;
  * <p>This is a specialization of a Loader which loads a HTTP server and keeps
  * it running in memory.
  */
-public class MyServer extends AbstractLoader {
+public class WebServer extends AbstractLoader {
   /** Tag used in various class identifying locations. */
-  public static final String CLASS = MyServer.class.getSimpleName();
+  public static final String CLASS = WebServer.class.getSimpleName();
 
   private static final int DEFAULT_PORT = 80;
 
