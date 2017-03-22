@@ -58,6 +58,8 @@ public class BlogHandler extends DefaultHandler implements UriResponder {
   // The default root namespace of our articles
   private static final String DEFAULT_ROOT = "content/blog";
 
+  private static final String INDEX_PAGE = "index.html";
+
   // The class loader object associated with this Class
   ClassLoader cLoader = this.getClass().getClassLoader();
 
@@ -118,6 +120,11 @@ public class BlogHandler extends DefaultHandler implements UriResponder {
     // remove any spaces
     coreRequest = coreRequest.replaceAll( "%20", "_" );
     coreRequest = coreRequest.replaceAll( " ", "_" );
+
+    // if the core request is now empty, serve up the blog index page.
+    if ( StringUtil.isBlank( coreRequest ) ) {
+      coreRequest = INDEX_PAGE;
+    }
 
     // add our configured parent directory to the real request. This is the
     // actual local resource for which we are looking:
