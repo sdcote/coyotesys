@@ -2,7 +2,6 @@ apply plugin: 'java'
 apply plugin: 'eclipse'
 apply plugin: 'application'
 
-
 defaultTasks 'clean', 'build', 'stage'
 version = '0.1'
 mainClassName = "coyote.loader.BootStrap"
@@ -11,8 +10,7 @@ mainClassName = "coyote.loader.BootStrap"
 jar {
 	manifest {
 	attributes  'Implementation-Title' : 'Coyote Systems Website',
-		'Provider' : 'Coyote Codeworks',
-		'Main-Class' : "$mainClassName"
+		'Provider' : 'Coyote Codeworks'
 	}
 }
 
