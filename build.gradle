@@ -1,17 +1,18 @@
 apply plugin: 'java'
 apply plugin: 'eclipse'
-apply plugin: 'idea'
+apply plugin: 'application'
 
 
-defaultTasks 'clean', 'build'
+defaultTasks 'clean', 'build', 'stage'
 version = '0.1'
+mainClassName = "coyote.loader.BootStrap"
 
 
 jar {
 	manifest {
-	attributes  'Implementation-Title' : 'Coyote Systems website',
+	attributes  'Implementation-Title' : 'Coyote Systems Website',
 		'Provider' : 'Coyote Codeworks',
-		'Implementation-Version' : 'coyote.loader.BootStrap'
+		'Main-Class' : "$mainClassName"
 	}
 }
 
@@ -27,7 +28,7 @@ dependencies {
 }
 
 task stage {
-  dependsOn installDist
+  dependsOn installApp
 }
 
 task wrapper(type: Wrapper) {
