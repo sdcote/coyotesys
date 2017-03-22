@@ -1,1 +1,1 @@
-web: build\install\CoyoteSystems\bin\CoyoteSystems
+web: build/install/CoyoteSystems/bin/CoyoteSystems
