@@ -28,7 +28,7 @@ dependencies {
 }
 
 task stage {
-  dependsOn installApp
+  dependsOn installDist
 }
 
 task wrapper(type: Wrapper) {
