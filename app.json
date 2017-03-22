@@ -1,0 +1,6 @@
+{
+  "name": "Coyote Systems Website",
+  "description": "Our website running on Coyote Loader.",
+  "image": "heroku/gradle",
+  "addons": []
+}
