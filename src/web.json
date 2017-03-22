@@ -1,0 +1,34 @@
+{
+	"Class" : "coyote.sdc.MyServer",
+	
+	"Port": 80,
+	
+	"Auth": {
+		"Users":[ 
+			{ "EncryptedName" : "v2UeWqKIv6ph2u35/7iI4joYLUE4U6iH", 
+			  "EncryptedPassword" : "6ntFRYIIv7wyh75cRgqlNzgAdPz/K2mz", 
+			  "EncryptedGroups" : "0HR3uyUplj+VLJTNJTyyUh1VuD36N6nJ0gAADuFsHVENVTBmspLMs0gkTdMFuOYF"
+			}
+		]
+	},
+	
+	"IPACL" : {
+		"default" : "allow"
+	},
+		
+	"Mappings" : {
+		"api/cmd/:cmd" : { "Class" : "coyote.sdc.handler.Command", "Priority" : 32767 }
+	},
+	
+	"Components": [
+		{"Class": "coyote.sdc.MyProcessor"}
+	],
+	
+		
+	"Logging": {
+		"ConsoleAppender": { "target": "STDOUT", "categories": "info, error, fatal, warn" },
+		"CyclingFileAppender": { "target": "debug.log", "categories": "trace, debug, info, error, fatal, warn", "generations": 10, "maxsize": "2MB", "enabled": true },
+		"CyclingFileAppender": { "target": "httpd.log", "categories": "httpd", "generations": 7, "interval": "1d", "cycletime": "00:03", "maxsize": "10MB" }
+	}
+
+}
