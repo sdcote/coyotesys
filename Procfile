@@ -1,1 +1,1 @@
-web: /build/install/CoyoteSystems/bin/CoyoteSystems web.json
+web: cd /build/install/CoyoteSystems; bin/CoyoteSystems web.json
