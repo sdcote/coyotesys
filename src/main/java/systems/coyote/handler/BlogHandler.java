@@ -78,14 +78,19 @@ public class BlogHandler extends DefaultHandler implements UriResponder {
 
     String coreRequest = HTTPDRouter.normalizeUri( session.getUri() );
 
-    // find the portion of the URI which differs from the base
-    for ( int index = 0; index < Math.min( baseUri.length(), coreRequest.length() ); index++ ) {
-      if ( baseUri.charAt( index ) != coreRequest.charAt( index ) ) {
-        coreRequest = HTTPDRouter.normalizeUri( coreRequest.substring( index ) );
-        break;
+    if ( !baseUri.equals( coreRequest ) ) {
+      // find the portion of the URI which differs from the base
+      for ( int index = 0; index < Math.min( baseUri.length(), coreRequest.length() ); index++ ) {
+        if ( baseUri.charAt( index ) != coreRequest.charAt( index ) ) {
+          coreRequest = HTTPDRouter.normalizeUri( coreRequest.substring( index ) );
+          break;
+        }
       }
+    } else{
+      //exact match; means the same as requesting /
+      coreRequest = "";
     }
-
+    
     // Retrieve the base directory in the classpath for our search
     String parentdirectory = config.getString( ROOT );
     try {
