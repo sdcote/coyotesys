@@ -27,7 +27,6 @@ import coyote.commons.network.http.SecurityResponseException;
 import coyote.commons.network.http.Status;
 import coyote.commons.network.http.auth.GenericAuthProvider;
 import coyote.commons.network.http.handler.HTTPDRouter;
-import coyote.commons.network.http.handler.ResourceHandler;
 import coyote.dataframe.DataField;
 import coyote.dataframe.DataFrame;
 import coyote.dataframe.DataFrameException;
@@ -40,7 +39,6 @@ import coyote.loader.component.AbstractManagedComponent;
 import coyote.loader.component.ManagedComponent;
 import coyote.loader.log.Log;
 import coyote.loader.log.LogMsg;
-import systems.coyote.handler.StatBoardHandler;
 
 
 /**
@@ -49,9 +47,12 @@ import systems.coyote.handler.StatBoardHandler;
  * <p>This is a specialization of a Loader which loads a HTTP server and keeps
  * it running in memory.
  * 
- * <p>As an extension of the AbstractLoader, this also support the loading of 
+ * <p>As an extension of the AbstractLoader, this also supports the loading of 
  * components, all of which will have a reference to this loader/webserver so 
  * it can use this as a coordination point for operations if necessary.
+ * 
+ * <p>All routes and handlers are specified in the configuration. This does 
+ * not serve anything by default.
  */
 public class WebServer extends AbstractLoader {
   /** Tag used in various class identifying locations. */
@@ -142,18 +143,9 @@ public class WebServer extends AbstractLoader {
     // Add the default routes to ensure basic operation
     server.addDefaultRoutes();
 
-    // remove the root handlers, we'll use ours below
+    // remove the root handlers, the configuration will contain our handlers
     server.removeRoute( "/" );
     server.removeRoute( "/index.html" );
-
-    // add a statistics board handler
-    server.addRoute( "/api/stat/", StatBoardHandler.class, getStats() ); // get the entire statboard
-    server.addRoute( "/api/stat/:metric", StatBoardHandler.class, getStats() ); // get all the metrics of a type (e.g. timer)
-    server.addRoute( "/api/stat/:metric/:name", StatBoardHandler.class, getStats() ); // get a particular metric
-
-    // Resource handler - higher priority value allows it to be a catch-all
-    server.addRoute( "/", Integer.MAX_VALUE, ResourceHandler.class, "content" );
-    server.addRoute( "/(.)+", Integer.MAX_VALUE, ResourceHandler.class, "content" );
 
     List<Config> mapsections = configuration.getSections( MAPPINGS );
     for ( Config section : mapsections ) {
