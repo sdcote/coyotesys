@@ -103,6 +103,15 @@ public class Processor extends AbstractManagedComponent implements ManagedCompon
         hostname = "unknown";
     }
 
+    // maybe clear out the frequency tables
+    
+    // maybe clear our old sessions
+    
+    // maybe publish logs somewhere?
+	
+	// This is a good place for tripwire detection, making sure the deployment 
+	// has not been touched
+    
     // increment a counter showing how many times this component was run
     loader.getStats().increment( getClass().getSimpleName() + ":Runs" );
 
