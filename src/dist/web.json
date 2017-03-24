@@ -1,6 +1,6 @@
 {
 	"Class" : "systems.coyote.WebServer",
-	"Port": 80,
+	"Port": 8080,
 	
 	"Auth": {
 		"Users":[ 
