@@ -33,8 +33,7 @@
 	
 		
 	"Logging": {
-		"ConsoleAppender": { "target": "STDOUT", "categories": "info, error, fatal, warn" },
-		"CyclingFileAppender": { "target": "debug.log", "categories": "trace, debug, info, error, fatal, warn", "generations": 10, "maxsize": "2MB", "enabled": true },
+		"CyclingFileAppender": { "target": "debug.log", "categories": "trace, debug, notice, info, warn, error, fatal", "generations": 10, "maxsize": "2MB", "enabled": true },
 		"CyclingFileAppender": { "target": "httpd.log", "categories": "httpd", "generations": 7, "interval": "1d", "cycletime": "00:03", "maxsize": "10MB" }
 	}
 
