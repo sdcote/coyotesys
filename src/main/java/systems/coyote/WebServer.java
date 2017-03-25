@@ -108,25 +108,37 @@ public class WebServer extends AbstractLoader {
     // command line argument override all other configuration settings
     parseArgs( getCommandLineArguments() );
 
-    int port = -1;
     int redirectport = 0;
 
     // we need to get the port first as part of the server constructor
+    int port = DEFAULT_PORT; // set default
+
+    // TODO: This is klunky, just query the element, don't loop through!  CHANGE THIS
     if ( cfg != null ) {
       for ( DataField field : cfg.getFields() ) {
         if ( PORT.equalsIgnoreCase( field.getName() ) ) {
           try {
             port = Integer.parseInt( field.getStringValue() );
+            port = NetUtil.validatePort( port );
+            if ( port == 0 ) {
+              Log.error( "Configured port of " + port + " is not a valid port (out of range) - ignoring" );
+              port = DEFAULT_PORT;
+            }
           } catch ( NumberFormatException e ) {
             port = DEFAULT_PORT;
-            Log.error( "Port configuration option was not a valid integer, using default" );
+            Log.error( "Port configuration option was not a valid integer - ignoring" );
           }
         } else if ( REDIRECT_PORT.equalsIgnoreCase( field.getName() ) ) {
           try {
             redirectport = Integer.parseInt( field.getStringValue() );
+            redirectport = NetUtil.validatePort( redirectport );
+            if ( redirectport == 0 ) {
+              Log.error( "Redirection port of " + redirectport + " is not a valid port (out of range) - ignoring" );
+              redirectport = 0;
+            }
           } catch ( NumberFormatException e ) {
             redirectport = 0;
-            Log.error( "RedirectPort configuration option was not a valid integer, ignoring" );
+            Log.error( "RedirectPort configuration option was not a valid integer - ignoring" );
           }
         }
       }

@@ -29,14 +29,19 @@ import coyote.i13n.Gauge;
 import coyote.i13n.StatBoard;
 import coyote.i13n.State;
 import coyote.i13n.TimingMaster;
+import coyote.loader.cfg.Config;
 import coyote.loader.log.Log;
+import systems.coyote.WebServer;
 
 
 /**
- * This provides access to all the stats in the  for the server.
+ * This provides access to all the stats in the for the loader(server).
  * 
- * <p>This is expected to the added to the HTTPRouter thusly: 
- * <pre>server.addRoute( "/api/stat/:metric/:name", StatBoardHandler.class, getStats() );</pre>    
+ * <p>This is expected to the added to the WebServer thusly:<pre>
+ * "/api/stat/" : { "Class" : "systems.coyote.handler.StatBoardHandler" },
+ * "/api/stat/:metric" : { "Class" : "systems.coyote.handler.StatBoardHandler" },
+ * "/api/stat/:metric/:name" : { "Class" : "systems.coyote.handler.StatBoardHandler" },
+ * </pre>    
  * If no metric or name is given, then the entire statistics board is 
  * serialized as a response. If a metric is given, but no name then all the 
  * metrics of that type are returned. Otherwise just the named metric is returned.
@@ -81,9 +86,11 @@ public class StatBoardHandler extends AbstractJsonHandler implements UriResponde
    */
   @Override
   public Response get( UriResource uriResource, Map<String, String> urlParams, IHTTPSession session ) {
+    WebServer loader = uriResource.initParameter( 0, WebServer.class );
+    Config config = uriResource.initParameter( 1, Config.class );
 
-    // The first init parameter should be the Statistics Board holding all our metrics and events
-    StatBoard statboard = uriResource.initParameter( 0, StatBoard.class );
+    // get a reference to the stats board of our loader, which should be the web server as well
+    StatBoard statboard = loader.getStats();
 
     // Get the command from the URL parameters specified when we were registered with the router 
     String metric = urlParams.get( "metric" );

@@ -11,14 +11,19 @@
  */
 package systems.coyote.handler;
 
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.Map;
 
 import coyote.commons.StringUtil;
+import coyote.commons.network.http.HTTPD;
 import coyote.commons.network.http.IHTTPSession;
 import coyote.commons.network.http.Response;
 import coyote.commons.network.http.auth.Auth;
+import coyote.commons.network.http.handler.HTTPDRouter;
 import coyote.commons.network.http.handler.UriResource;
 import coyote.commons.network.http.handler.UriResponder;
+import coyote.loader.log.Log;
 
 
 /**
@@ -52,6 +57,65 @@ public class UserProfileHandler extends AbstractJsonHandler implements UriRespon
     }
 
     return Response.createFixedLengthResponse( getStatus(), getMimeType(), getText() );
+  }
+
+  
+  private void logRequestDetails( UriResource uriResource, IHTTPSession session ) {
+    Map<String, String> header = session.getRequestHeaders();
+    Map<String, String> parms = session.getParms();
+    String uri = session.getUri();
+
+    final String baseUri = uriResource.getUri();
+
+    session.getQueryParameterString();
+
+    // Print 
+    if ( Log.isLogging( Log.DEBUG_EVENTS ) ) {
+      StringBuffer b = new StringBuffer( "DEBUG: " );
+
+      b.append( session.getMethod() + " '" + uri + "' \r\n" );
+
+      Iterator<String> e = header.keySet().iterator();
+      while ( e.hasNext() ) {
+        String value = e.next();
+        b.append( "   HDR: '" + value + "' = '" + header.get( value ) + "'\r\n" );
+      }
+      e = parms.keySet().iterator();
+      while ( e.hasNext() ) {
+        String value = e.next();
+        b.append( "   PRM: '" + value + "' = '" + parms.get( value ) + "'\r\n" );
+      }
+      Log.append( HTTPD.EVENT, b.toString() );
+    }
+
+    Log.append( HTTPD.EVENT, "ResourceHandler servicing request for " + baseUri );
+
+    String realUri = HTTPDRouter.normalizeUri( session.getUri() );
+
+    for ( int index = 0; index < Math.min( baseUri.length(), realUri.length() ); index++ ) {
+      if ( baseUri.charAt( index ) != realUri.charAt( index ) ) {
+        realUri = HTTPDRouter.normalizeUri( realUri.substring( index ) );
+        break;
+      }
+    }
+    Log.append( HTTPD.EVENT, "ResourceHandler processed request for real URI '" + realUri + "'" );
+  }
+
+  
+  
+  /**
+   * Split the pat up into an array of directories and a file , the last element
+   */
+  private static String[] getPathArray( final String uri ) {
+    final String array[] = uri.split( "/" );
+    final ArrayList<String> pathArray = new ArrayList<String>();
+
+    for ( final String s : array ) {
+      if ( s.length() > 0 ) {
+        pathArray.add( s );
+      }
+    }
+    return pathArray.toArray( new String[] {} );
   }
 
 }
