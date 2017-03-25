@@ -1,21 +1,21 @@
 {
 	"Class" : "systems.coyote.WebServer",
-	"Port": 8080,
 	
 	"Auth": {
 		"Users":[ 
-			{ "EncryptedName" : "v2UeWqKIv6ph2u35/7iI4joYLUE4U6iH", 
-			  "EncryptedPassword" : "6ntFRYIIv7wyh75cRgqlNzgAdPz/K2mz", 
-			  "EncryptedGroups" : "0HR3uyUplj+VLJTNJTyyUh1VuD36N6nJ0gAADuFsHVENVTBmspLMs0gkTdMFuOYF"
+			{ 
+				"EncryptedName" : "v2UeWqKIv6ph2u35/7iI4joYLUE4U6iH", 
+				"EncryptedPassword" : "6ntFRYIIv7wyh75cRgqlNzgAdPz/K2mz", 
+				"EncryptedGroups" : "0HR3uyUplj+VLJTNJTyyUh1VuD36N6nJ0gAADuFsHVENVTBmspLMs0gkTdMFuOYF"
 			}
 		],
 		"AllowUnsecuredConnections" : true
 	},
-	
+
 	"IPACL" : {
 		"default" : "allow"
 	},
-		
+
 	"Mappings" : {
 		"api/contact" : { "Class" : "systems.coyote.handler.ContactHandler" },
 		"api/stat/" : { "Class" : "systems.coyote.handler.StatBoardHandler" },

@@ -1,1 +1,1 @@
-web: cd \build\install\CoyoteSystems; bin\CoyoteSystems.bat web.json
+web: cd \build\install\CoyoteSystems; bin\CoyoteSystems.bat web.json -p %PORT%

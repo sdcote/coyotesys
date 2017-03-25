@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import coyote.commons.NetUtil;
 import coyote.commons.StringUtil;
 import coyote.commons.Version;
 import coyote.commons.network.MimeType;
@@ -61,6 +62,9 @@ public class WebServer extends AbstractLoader {
   /** The default port on which this listens */
   private static final int DEFAULT_PORT = 80;
 
+  /** The port on which we should bind as specified from the command line - overrides all, even configuration file */
+  private int bindPort = -1;
+
   /** Our main server */
   private HTTPDRouter server = null;
 
@@ -68,7 +72,7 @@ public class WebServer extends AbstractLoader {
   private HTTPD redirectServer = null;
 
   /** The version of this server. */
-  public static final Version VERSION = new Version( 0, 0, 1, Version.EXPERIMENTAL );
+  public static final Version VERSION = new Version( 0, 0, 2, Version.EXPERIMENTAL );
 
   // the port on which this server listens, defaults to 80
   private static final String PORT = "Port";
@@ -88,6 +92,9 @@ public class WebServer extends AbstractLoader {
   private static final String CLASS = "Class";
   private static final String PRIORITY = "Priority";
 
+  // command line argument for the port on which we should bind
+  private static final String PORT_ARG = "-p";
+
 
 
 
@@ -98,7 +105,10 @@ public class WebServer extends AbstractLoader {
   public void configure( Config cfg ) throws ConfigurationException {
     super.configure( cfg );
 
-    int port = DEFAULT_PORT;
+    // command line argument override all other configuration settings
+    parseArgs( getCommandLineArguments() );
+
+    int port = -1;
     int redirectport = 0;
 
     // we need to get the port first as part of the server constructor
@@ -127,6 +137,12 @@ public class WebServer extends AbstractLoader {
       secureServer = cfg.getAsBoolean( SECURESERVER );
     } catch ( DataFrameException e1 ) {
       secureServer = false;
+    }
+
+    // If we have a valid bind port from the command line arguments, use it instead of configured port
+    if ( bindPort > 0 && bindPort != port ) {
+      Log.warn( "Command line argument of port " + bindPort + " overrides configuration port of " + port );
+      port = bindPort;
     }
 
     // create a server with the default mappings
@@ -207,6 +223,31 @@ public class WebServer extends AbstractLoader {
       Log.info( "Configured server with " + server.getMappings().size() + " mappings" );
     }
 
+  }
+
+
+
+
+  /**
+   * @param args
+   */
+  private void parseArgs( String[] args ) {
+    if ( args != null && args.length > 0 ) {
+      for ( int x = 0; x < args.length; x++ ) {
+        if ( PORT_ARG.equalsIgnoreCase( args[x] ) ) {
+          try {
+            bindPort = Integer.parseInt( args[x + 1] );
+            Log.info( "Binding to port " + bindPort + " as specified on the command line" );
+            bindPort = NetUtil.validatePort( bindPort );
+            if ( bindPort == 0 ) {
+              Log.error( "Command line port argument '" + args[x + 1] + "' is not a valid port (out of range) - ignoring" );
+            }
+          } catch ( NumberFormatException e ) {
+            Log.error( "Command line port argument '" + args[x + 1] + "' is not a valid integer - ignoring" );
+          }
+        }
+      }
+    }
   }
 
 
