@@ -19,12 +19,10 @@
 	"Mappings" : {
 		"api/contact" : { "Class" : "systems.coyote.handler.ContactHandler" },
 		"api/stat/" : { "Class" : "systems.coyote.handler.StatBoardHandler" },
-    	"api/stat/:metric" : { "Class" : "systems.coyote.handler.StatBoardHandler" },
-    	"api/stat/:metric/:name" : { "Class" : "systems.coyote.handler.StatBoardHandler" },
 		"blog" : { "Class" : "systems.coyote.handler.BlogHandler", "root":"content/blog" },
 		"blog/(.)+" : { "Class" : "systems.coyote.handler.BlogHandler", "root":"content/blog" },
-		"/" : { "Class" : "systems.coyote.handler.ResourceHandler", "root":"content", "RedirectOnIndexedDir":true, "Priority" : 32767  },
-		"/(.)+" : { "Class" : "systems.coyote.handler.ResourceHandler", "root":"content", "RedirectOnIndexedDir":true, "Priority" : 32767  }
+		"/" : { "Class" : "systems.coyote.handler.ResourceHandler", "root":"content", "RedirectOnIndexedDir":false, "Priority" : 32767  },
+		"/(.)+" : { "Class" : "systems.coyote.handler.ResourceHandler", "root":"content", "RedirectOnIndexedDir":false, "Priority" : 32767  }
 	},
 	
 	"Components": [
