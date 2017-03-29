@@ -9,7 +9,8 @@
 				"EncryptedGroups" : "0HR3uyUplj+VLJTNJTyyUh1VuD36N6nJ0gAADuFsHVENVTBmspLMs0gkTdMFuOYF"
 			}
 		],
-		"AllowUnsecuredConnections" : true
+		"AllowUnsecuredConnections" : true,
+		"SendAuthRequestOnFailure" : true
 	},
 
 	"IPACL" : {
