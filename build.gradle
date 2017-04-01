@@ -21,7 +21,9 @@ repositories {
 
 dependencies {
 	compile files('./lib/CoyoteWeb-0.1.jar')
-	testCompile 'junit:junit:4.11'	
+	compile files('./lib/activation-1.1.jar')
+	compile files('./lib/javax.mail-1.5.6.jar')
+	testCompile 'junit:junit:4.12'	
 }
 
 task stage {
