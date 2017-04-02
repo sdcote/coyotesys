@@ -18,7 +18,7 @@
 	},
 
 	"Mappings" : {
-		"api/contact" : { "Class" : "systems.coyote.handler.ContactHandler" },
+		"api/contact" : { "Class" : "systems.coyote.handler.ContactHandler", "Window":3600000, "Limit":3, "BlacklistLimit":3, "EncryptedUsername":"q3YEnVqgPxdNauVIKi/0CNOIA0xDP7rvBNyXksa6eYCrKc9OGmZ2yWl+Yrrw9RNW3QpXrX0Aluw=", "EncryptedPassword":"nrasR4FXrf+ZyM1cigtHktGWc+UeZ5EPoNj/Lack6tXPgx58hFwwXq7BiYmN5SfA", "EncryptedSender":"q3YEnVqgPxdNauVIKi/0CNOIA0xDP7rvBNyXksa6eYCrKc9OGmZ2yWl+Yrrw9RNW3QpXrX0Aluw=", "EncryptedReceiver":"Za1c7XyXOAxh2u35/7iI4l6UEbOUxmRvXHpf9eGrUQfwZRQzKybKgQ==", "Host":"smtp.gmail.com", "Port":587 },
 		"api/stat/" : { "Class" : "systems.coyote.handler.StatBoardHandler" },
 		"blog" : { "Class" : "systems.coyote.handler.BlogHandler", "root":"content/blog" },
 		"blog/(.)+" : { "Class" : "systems.coyote.handler.BlogHandler", "root":"content/blog" },
