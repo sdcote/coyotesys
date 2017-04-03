@@ -187,13 +187,21 @@ public class ContactHandler extends AbstractJsonHandler implements UriResponder 
 
 
   /**
-   * @param parms
-   * @return
+   * Generate a message from the map of request parameters.
+   * 
+   * @param parms the (form) parameters from the request
+   * 
+   * @return a formatted string suitable for sending as a body of a message
    */
   private String generateMessage( Map<String, String> params ) {
     StringBuffer b = new StringBuffer();
     for ( String key : params.keySet() ) {
-      b.append( "'" + key + "':'" + params.get( key ) + "'" );
+      b.append( "'" );
+      b.append( key );
+      b.append( "':'" );
+      b.append( params.get( key ) );
+      b.append( "'" );
+      b.append( "\r\n" );
     }
     return b.toString();
   }
@@ -209,7 +217,7 @@ public class ContactHandler extends AbstractJsonHandler implements UriResponder 
     if ( StringUtil.isBlank( username ) ) {
       String cipherText = config.getString( "EncryptedUsername" );
       if ( StringUtil.isNotBlank( cipherText ) ) {
-        username = BootStrap.decrypt( cipherText );
+        username = CipherUtil.decryptString( cipherText );
       }
     }
 
@@ -217,7 +225,7 @@ public class ContactHandler extends AbstractJsonHandler implements UriResponder 
     if ( StringUtil.isBlank( password ) ) {
       String cipherText = config.getString( "EncryptedPassword" );
       if ( StringUtil.isNotBlank( cipherText ) ) {
-        password = BootStrap.decrypt( cipherText );
+        password = CipherUtil.decryptString( cipherText );
       }
     }
 
@@ -225,7 +233,7 @@ public class ContactHandler extends AbstractJsonHandler implements UriResponder 
     if ( StringUtil.isBlank( sender ) ) {
       String cipherText = config.getString( "EncryptedSender" );
       if ( StringUtil.isNotBlank( cipherText ) ) {
-        sender = BootStrap.decrypt( cipherText );
+        sender = CipherUtil.decryptString( cipherText );
       }
     }
 
@@ -233,7 +241,7 @@ public class ContactHandler extends AbstractJsonHandler implements UriResponder 
     if ( StringUtil.isBlank( receiver ) ) {
       String cipherText = config.getString( "EncryptedReceiver" );
       if ( StringUtil.isNotBlank( cipherText ) ) {
-        receiver = BootStrap.decrypt( cipherText );
+        receiver = CipherUtil.decryptString( cipherText );
       }
     }
 
