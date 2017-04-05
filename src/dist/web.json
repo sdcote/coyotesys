@@ -1,5 +1,8 @@
 {
 	"Class" : "systems.coyote.WebServer",
+	"EnableARM" : true,
+	"EnableGauges" : true,
+	"EnableTiming" : true,		
 	
 	"Auth": {
 		"Users":[ 
@@ -10,10 +13,7 @@
 			}
 		],
 		"AllowUnsecuredConnections" : true,
-		"SendAuthRequestOnFailure" : true,
-		"EnableARM" : true,
-		"EnableGauges" : true,
-		"EnableTiming" : true		
+		"SendAuthRequestOnFailure" : true
 	},
 
 	"IPACL" : {
