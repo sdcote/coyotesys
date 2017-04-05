@@ -10,7 +10,10 @@
 			}
 		],
 		"AllowUnsecuredConnections" : true,
-		"SendAuthRequestOnFailure" : true
+		"SendAuthRequestOnFailure" : true,
+		"EnableARM" : true,
+		"EnableGauges" : true,
+		"EnableTiming" : true		
 	},
 
 	"IPACL" : {
