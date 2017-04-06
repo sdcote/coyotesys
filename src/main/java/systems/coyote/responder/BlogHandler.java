@@ -9,7 +9,7 @@
  *   Stephan D. Cote 
  *      - Initial concept and implementation
  */
-package systems.coyote.handler;
+package systems.coyote.responder;
 
 import java.net.URL;
 import java.util.Map;
@@ -22,11 +22,11 @@ import coyote.commons.network.http.IStatus;
 import coyote.commons.network.http.Response;
 import coyote.commons.network.http.Status;
 import coyote.commons.network.http.auth.Auth;
-import coyote.commons.network.http.handler.DefaultHandler;
-import coyote.commons.network.http.handler.Error404UriHandler;
-import coyote.commons.network.http.handler.HTTPDRouter;
-import coyote.commons.network.http.handler.UriResource;
-import coyote.commons.network.http.handler.UriResponder;
+import coyote.commons.network.http.responder.DefaultResponder;
+import coyote.commons.network.http.responder.Error404Responder;
+import coyote.commons.network.http.responder.HTTPDRouter;
+import coyote.commons.network.http.responder.Responder;
+import coyote.commons.network.http.responder.UriResource;
 import coyote.loader.cfg.Config;
 import coyote.loader.log.Log;
 import systems.coyote.WebServer;
@@ -50,7 +50,7 @@ import systems.coyote.WebServer;
  * the class loader.
  */
 @Auth(required = false)
-public class BlogHandler extends DefaultHandler implements UriResponder {
+public class BlogHandler extends DefaultResponder implements Responder {
 
   // The configuration parameter containing the root of the blog articles
   private static final String ROOT = "Root";
@@ -86,11 +86,11 @@ public class BlogHandler extends DefaultHandler implements UriResponder {
           break;
         }
       }
-    } else{
+    } else {
       //exact match; means the same as requesting /
       coreRequest = "";
     }
-    
+
     // Retrieve the base directory in the classpath for our search
     String parentdirectory = config.getString( ROOT );
     try {
@@ -141,7 +141,7 @@ public class BlogHandler extends DefaultHandler implements UriResponder {
     // if we have no URL, the class loader could not find the resource 
     if ( rsc == null ) {
       Log.append( HTTPD.EVENT, "404 NOT FOUND - '" + coreRequest + "' LOCAL: " + localPath );
-      return new Error404UriHandler().get( uriResource, urlParams, session );
+      return new Error404Responder().get( uriResource, urlParams, session );
     } else {
       // Success - Found the resource /article 
       try {

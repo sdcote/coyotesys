@@ -21,12 +21,25 @@
 	},
 
 	"Mappings" : {
-		"api/contact" : { "Class" : "systems.coyote.handler.ContactHandler", "Window":3600000, "Limit":3, "BlacklistLimit":3, "EncryptedUsername":"q3YEnVqgPxdNauVIKi/0CNOIA0xDP7rvBNyXksa6eYCrKc9OGmZ2yWl+Yrrw9RNW3QpXrX0Aluw=", "EncryptedPassword":"nrasR4FXrf+ZyM1cigtHktGWc+UeZ5EPoNj/Lack6tXPgx58hFwwXq7BiYmN5SfA", "EncryptedSender":"q3YEnVqgPxdNauVIKi/0CNOIA0xDP7rvBNyXksa6eYCrKc9OGmZ2yWl+Yrrw9RNW3QpXrX0Aluw=", "EncryptedReceiver":"Za1c7XyXOAxh2u35/7iI4l6UEbOUxmRvXHpf9eGrUQfwZRQzKybKgQ==", "Host":"smtp.gmail.com", "Port":587 },
-		"api/stat/" : { "Class" : "systems.coyote.handler.StatBoardHandler" },
-		"blog" : { "Class" : "systems.coyote.handler.BlogHandler", "root":"content/blog" },
-		"blog/(.)+" : { "Class" : "systems.coyote.handler.BlogHandler", "root":"content/blog" },
-		"/" : { "Class" : "systems.coyote.handler.ResourceHandler", "root":"content", "RedirectOnIndexedDir":false, "Priority" : 32767  },
-		"/(.)+" : { "Class" : "systems.coyote.handler.ResourceHandler", "root":"content", "RedirectOnIndexedDir":false, "Priority" : 32767  }
+		"api/contact" : { 
+			"Class" : "systems.coyote.responder.ContactResponder", 
+			"Window":3600000, 
+			"Limit":3, 
+			"BlacklistLimit":3, 
+			"EncryptedUsername":"q3YEnVqgPxdNauVIKi/0CNOIA0xDP7rvBNyXksa6eYCrKc9OGmZ2yWl+Yrrw9RNW3QpXrX0Aluw=", 
+			"EncryptedPassword":"nrasR4FXrf+ZyM1cigtHktGWc+UeZ5EPoNj/Lack6tXPgx58hFwwXq7BiYmN5SfA", 
+			"EncryptedSender":"q3YEnVqgPxdNauVIKi/0CNOIA0xDP7rvBNyXksa6eYCrKc9OGmZ2yWl+Yrrw9RNW3QpXrX0Aluw=", 
+			"EncryptedReceiver":"Za1c7XyXOAxh2u35/7iI4l6UEbOUxmRvXHpf9eGrUQfwZRQzKybKgQ==", 
+			"Host":"smtp.gmail.com", 
+			"Port":587 
+		},
+		"api/stat/" : { "Class" : "systems.coyote.responder.StatBoardResponder" },
+		"/api/log" : { "Class" : "systems.coyote.responder.LogResponder" },
+    	"/api/log/:name" : { "Class" : "systems.coyote.responder.LogResponder" },
+		"blog" : { "Class" : "systems.coyote.responder.BlogResponder", "root":"content/blog" },
+		"blog/(.)+" : { "Class" : "systems.coyote.responder.BlogResponder", "root":"content/blog" },
+		"/" : { "Class" : "systems.coyote.responder.ResourceResponder", "root":"content", "RedirectOnIndexedDir":false, "Priority" : 32767  },
+		"/(.)+" : { "Class" : "systems.coyote.responder.ResourceResponder", "root":"content", "RedirectOnIndexedDir":false, "Priority" : 32767  }
 	},
 	
 	"Components": [
@@ -35,8 +48,8 @@
 	
 		
 	"Logging": {
-		"CyclingFileAppender": { "target": "debug.log", "categories": "trace, debug, notice, info, warn, error, fatal", "generations": 10, "maxsize": "2MB", "enabled": true },
-		"CyclingFileAppender": { "target": "httpd.log", "categories": "httpd", "generations": 7, "interval": "1d", "cycletime": "00:03", "maxsize": "10MB" }
+		"CyclingFileAppender": { "name": "debug", "target": "debug.log", "categories": "trace, debug, notice, info, warn, error, fatal", "generations": 10, "maxsize": "2MB", "enabled": true },
+		"CyclingFileAppender": { "name": "http", "target": "httpd.log", "categories": "httpd", "generations": 7, "interval": "1d", "cycletime": "00:03", "maxsize": "10MB" }
 	}
 
 }

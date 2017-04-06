@@ -9,7 +9,7 @@
  *   Stephan D. Cote 
  *      - Initial concept and implementation
  */
-package systems.coyote.handler;
+package systems.coyote.responder;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -31,13 +31,13 @@ import coyote.commons.network.http.IHTTPSession;
 import coyote.commons.network.http.Response;
 import coyote.commons.network.http.ResponseException;
 import coyote.commons.network.http.Status;
-import coyote.commons.network.http.handler.UriResource;
-import coyote.commons.network.http.handler.UriResponder;
+import coyote.commons.network.http.responder.Responder;
+import coyote.commons.network.http.responder.UriResource;
 import coyote.commons.security.OperationFrequency;
-import coyote.loader.BootStrap;
 import coyote.loader.cfg.Config;
 import coyote.loader.log.Log;
 import systems.coyote.WebServer;
+import systems.coyote.responder.AbstractJsonResponder;
 
 
 /**
@@ -54,7 +54,7 @@ import systems.coyote.WebServer;
  * <p>The logs should be checked regularly for repeat offenders and added to 
  * the server blacklist configuration for permanent ban from the site.
  */
-public class ContactHandler extends AbstractJsonHandler implements UriResponder {
+public class ContactHandler extends AbstractJsonResponder implements Responder {
 
   private static final String CLASSNAME = ContactHandler.class.getSimpleName();
   private static final String DOS_TABLE_KEY = CLASSNAME + "DOS.TABLE";
