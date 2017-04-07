@@ -53,9 +53,9 @@ import systems.coyote.WebServer;
  * <p>The logs should be checked regularly for repeat offenders and added to
  * the server blacklist configuration for permanent ban from the site.
  */
-public class ContactHandler extends AbstractJsonResponder implements Responder {
+public class ContactResponder extends AbstractJsonResponder implements Responder {
 
-  private static final String CLASSNAME = ContactHandler.class.getSimpleName();
+  private static final String CLASSNAME = ContactResponder.class.getSimpleName();
   private static final String DOS_TABLE_KEY = CLASSNAME + "DOS.TABLE";
   private static final String DURATION = "Window";
   private static final String LIMIT = "Limit";
