@@ -1,12 +1,12 @@
 /*
  * Copyright (c) 2017 Stephan D. Cote' - All rights reserved.
- * 
- * This program and the accompanying materials are made available under the 
- * terms of the MIT License which accompanies this distribution, and is 
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the MIT License which accompanies this distribution, and is
  * available at http://creativecommons.org/licenses/MIT/
  *
  * Contributors:
- *   Stephan D. Cote 
+ *   Stephan D. Cote
  *      - Initial concept and implementation
  */
 package systems.coyote.responder;
@@ -25,28 +25,28 @@ import coyote.commons.network.http.auth.Auth;
 import coyote.commons.network.http.responder.DefaultResponder;
 import coyote.commons.network.http.responder.Error404Responder;
 import coyote.commons.network.http.responder.HTTPDRouter;
+import coyote.commons.network.http.responder.Resource;
 import coyote.commons.network.http.responder.Responder;
-import coyote.commons.network.http.responder.UriResource;
 import coyote.loader.cfg.Config;
 import coyote.loader.log.Log;
 import systems.coyote.WebServer;
 
 
 /**
- * Retrieves blog articles from content based on a variety of naming 
+ * Retrieves blog articles from content based on a variety of naming
  * conventions.
- * 
- * <p>This is designed to be loaded by the server from a configuration file 
+ *
+ * <p>This is designed to be loaded by the server from a configuration file
  * similar to the following:<pre>
  * "Mappings" : {
  *     "blog/(.)+" : { "Class" : "systems.coyote.handler.BlogHandler", "Root":"content/blog" }
  *  }</pre>
- *  The {@code Root} element describes where in the class path the articles 
+ *  The {@code Root} element describes where in the class path the articles
  *  can be found.
- *  
- * <p>Basic operation involves retrieving the name of the article from the URI 
- * then normalizing it to all lower case and replacing any spaces or %20 with 
- * underscores. The normalized name is then used to lookup the resource with 
+ *
+ * <p>Basic operation involves retrieving the name of the article from the URI
+ * then normalizing it to all lower case and replacing any spaces or %20 with
+ * underscores. The normalized name is then used to lookup the resource with
  * the class loader.
  */
 @Auth(required = false)
@@ -67,14 +67,14 @@ public class BlogHandler extends DefaultResponder implements Responder {
 
 
   /**
-   * 
+   *
    */
   @Override
-  public Response get( final UriResource uriResource, final Map<String, String> urlParams, final IHTTPSession session ) {
-    WebServer loader = uriResource.initParameter( 0, WebServer.class );
-    Config config = uriResource.initParameter( 1, Config.class );
+  public Response get( final Resource resource, final Map<String, String> urlParams, final IHTTPSession session ) {
+    resource.initParameter( 0, WebServer.class );
+    final Config config = resource.initParameter( 1, Config.class );
 
-    final String baseUri = uriResource.getUri(); // the regex matcher URL
+    final String baseUri = resource.getUri(); // the regex matcher URL
 
     String coreRequest = HTTPDRouter.normalizeUri( session.getUri() );
 
@@ -97,7 +97,7 @@ public class BlogHandler extends DefaultResponder implements Responder {
       if ( StringUtil.isBlank( parentdirectory ) ) {
         parentdirectory = DEFAULT_ROOT;
       }
-    } catch ( Exception e ) {
+    } catch ( final Exception e ) {
       Log.append( HTTPD.EVENT, "BlogHandler initialization error: Root Directory: " + e.getMessage() + " - defaulting to '" + DEFAULT_ROOT + "'" );
     }
 
@@ -133,23 +133,31 @@ public class BlogHandler extends DefaultResponder implements Responder {
 
     // add our configured parent directory to the real request. This is the
     // actual local resource for which we are looking:
-    String localPath = parentdirectory + coreRequest;
+    final String localPath = parentdirectory + coreRequest;
 
     // See if the requested resource exists
-    URL rsc = cLoader.getResource( localPath );
+    final URL rsc = cLoader.getResource( localPath );
 
-    // if we have no URL, the class loader could not find the resource 
+    // if we have no URL, the class loader could not find the resource
     if ( rsc == null ) {
       Log.append( HTTPD.EVENT, "404 NOT FOUND - '" + coreRequest + "' LOCAL: " + localPath );
-      return new Error404Responder().get( uriResource, urlParams, session );
+      return new Error404Responder().get( resource, urlParams, session );
     } else {
-      // Success - Found the resource /article 
+      // Success - Found the resource /article
       try {
         return Response.createChunkedResponse( Status.OK, HTTPD.getMimeTypeForFile( localPath ), cLoader.getResourceAsStream( localPath ) );
       } catch ( final Exception ioe ) {
         return Response.createFixedLengthResponse( Status.REQUEST_TIMEOUT, MimeType.TEXT.getType(), null );
       }
     }
+  }
+
+
+
+
+  @Override
+  public String getMimeType() {
+    return MimeType.HTML.getType();
   }
 
 
@@ -166,14 +174,6 @@ public class BlogHandler extends DefaultResponder implements Responder {
   @Override
   public String getText() {
     return "";
-  }
-
-
-
-
-  @Override
-  public String getMimeType() {
-    return MimeType.HTML.getType();
   }
 
 }
