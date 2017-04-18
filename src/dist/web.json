@@ -36,13 +36,15 @@
 		"api/stat/" : { "Class" : "systems.coyote.responder.StatBoardResponder" },
 		"/api/log" : { "Class" : "systems.coyote.responder.LogResponder" },
     	"/api/log/:name" : { "Class" : "systems.coyote.responder.LogResponder" },
+		"/api/checkin" : { "Class" : "systems.coyote.responder.CheckInResponder" },
+    	"/api/checkin/:name" : { "Class" : "systems.coyote.responder.CheckInResponder" },
 		"blog" : { "Class" : "systems.coyote.responder.BlogResponder", "root":"content/blog" },
 		"blog/(.)+" : { "Class" : "systems.coyote.responder.BlogResponder", "root":"content/blog" },
 		"/" : { "Class" : "systems.coyote.responder.ResourceResponder", "root":"content", "RedirectOnIndexedDir":false, "Priority" : 32767  },
 		"/(.)+" : { "Class" : "systems.coyote.responder.ResourceResponder", "root":"content", "RedirectOnIndexedDir":false, "Priority" : 32767  }
 	},
 	
-	"Components": [
+	"Component": [
 		{"Class": "systems.coyote.Processor"}
 	],
 	
