@@ -11,12 +11,21 @@
  */
 package systems.coyote.responder;
 
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.Map;
 
+import coyote.commons.network.http.HTTPD;
 import coyote.commons.network.http.IHTTPSession;
 import coyote.commons.network.http.Response;
+import coyote.commons.network.http.ResponseException;
 import coyote.commons.network.http.responder.Resource;
 import coyote.commons.network.http.responder.Responder;
+import coyote.dataframe.DataFrame;
+import coyote.loader.cfg.Config;
+import coyote.loader.log.Log;
+import systems.coyote.WebServer;
 
 
 /**
@@ -33,22 +42,66 @@ import coyote.commons.network.http.responder.Responder;
  */
 public class CheckInResponder extends AbstractJsonResponder implements Responder {
 
+  public static final Map<String, DataFrame> components = new Hashtable<String, DataFrame>();
+
+
+
+
   /**
    * @see coyote.commons.network.http.responder.DefaultResponder#get(coyote.commons.network.http.responder.Resource, java.util.Map, coyote.commons.network.http.IHTTPSession)
    */
   @Override
   public Response get( Resource resource, Map<String, String> urlParams, IHTTPSession session ) {
+    final WebServer loader = resource.initParameter( 0, WebServer.class );
+    final Config config = resource.initParameter( 1, Config.class );
+
+    // Get the command from the URL parameters specified when we were registered with the router 
+    String name = urlParams.get( "name" );
+    // /checkin/  - get all
+    // /checkin/:name  - get all with this name
+
     // TODO Auto-generated method stub
-    return super.get( resource, urlParams, session );
+
+    return Response.createFixedLengthResponse( getStatus(), getMimeType(), getText() );
   }
 
+
+
+
   /**
+   * Put the given body in a map of other bodies by its ID
+   * 
+   * <p>As long as the body is a valid JSON and it contains a top level field 
+   * of "id" (case in-sensitive), store it.
+   * 
    * @see coyote.commons.network.http.responder.DefaultStreamResponder#put(coyote.commons.network.http.responder.Resource, java.util.Map, coyote.commons.network.http.IHTTPSession)
    */
   @Override
   public Response put( Resource resource, Map<String, String> urlParams, IHTTPSession session ) {
+    final WebServer loader = resource.initParameter( 0, WebServer.class );
+    final Config config = resource.initParameter( 1, Config.class );
+
+    Map<String, String> files = new HashMap<String, String>();
+    try {
+      session.parseBody( files );
+
+      for ( String name : files.keySet() ) {
+        String body = files.get( name );
+        Log.info( this.getClass().getSimpleName() + " marshaling '" + name + "' body of '" + body.substring( 0, body.length() > 500 ? 500 : body.length() ) + ( body.length() <= 500 ? "'" : " ...'" ) );
+      }
+    } catch ( IOException | ResponseException e ) {
+      Log.append( HTTPD.EVENT, "ERROR: Could not parse body: " + e.getClass().getSimpleName() + " - " + e.getMessage() );
+    }
+    
+    // If there is a valid data frame in the body
+    
+    // If the frame contains an ID
+    
+    // Store the frame in the map by its ID
+
     // TODO Auto-generated method stub
-    return super.put( resource, urlParams, session );
+    results.set( "status", "success" );
+    return Response.createFixedLengthResponse( getStatus(), getMimeType(), getText() );
   }
 
 }
