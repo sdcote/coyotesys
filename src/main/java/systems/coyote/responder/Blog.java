@@ -50,7 +50,7 @@ import systems.coyote.WebServer;
  * the class loader.
  */
 @Auth(required = false)
-public class BlogResponder extends DefaultResponder implements Responder {
+public class Blog extends DefaultResponder implements Responder {
 
   // The configuration parameter containing the root of the blog articles
   private static final String ROOT = "Root";

@@ -40,7 +40,7 @@ import systems.coyote.WebServer;
  * managers to use in locating them. It also gives basic monitoring data to 
  * managers with having them contact the component directly.
  */
-public class CheckInResponder extends AbstractJsonResponder implements Responder {
+public class CheckIn extends AbstractJsonResponder implements Responder {
 
   public static final Map<String, DataFrame> components = new Hashtable<String, DataFrame>();
 
