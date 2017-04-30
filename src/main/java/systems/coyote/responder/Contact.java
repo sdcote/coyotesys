@@ -158,9 +158,11 @@ public class Contact extends AbstractJsonResponder implements Responder {
     final Config config = resource.initParameter( 1, Config.class );
 
     // parse the request body, populating any request parameters (from the
-    // submitted form) and any file chunks, although there should be none
+    // submitted form) and any file chunks, although there should be none.
+    // This has the side effect of populating request parameters in the 
+    // session with data from the request message body.
     try {
-      parseBody( session );
+      session.parseBody();
     } catch ( final IOException ioe ) {
       return Response.createFixedLengthResponse( Status.INTERNAL_ERROR, MimeType.TEXT.getType(), "Problems parsing request body: " + ioe.getMessage() );
     } catch ( final ResponseException re ) {
