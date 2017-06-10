@@ -1,5 +1,5 @@
 {
-	"Class" : "systems.coyote.WebServer",
+	"Class" : "coyote.commons.WebServer",
 	"EnableARM" : true,
 	"EnableGauges" : true,
 	"EnableTiming" : true,		

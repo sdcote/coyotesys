@@ -25,6 +25,7 @@ import javax.mail.internet.MimeMessage;
 
 import coyote.commons.CipherUtil;
 import coyote.commons.StringUtil;
+import coyote.commons.WebServer;
 import coyote.commons.network.MimeType;
 import coyote.commons.network.http.HTTPD;
 import coyote.commons.network.http.IHTTPSession;
@@ -36,7 +37,6 @@ import coyote.commons.network.http.responder.Responder;
 import coyote.commons.security.OperationFrequency;
 import coyote.loader.cfg.Config;
 import coyote.loader.log.Log;
-import systems.coyote.WebServer;
 
 
 /**
