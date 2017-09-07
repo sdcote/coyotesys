@@ -390,6 +390,19 @@
 						<p class="text-muted">ServiceNow ITSM Integration with backoffice and business partner systems</p>
 					</div>
 				</div>
+				<div class="col-md-4 col-sm-6 portfolio-item">
+					<a href="#solutionsModal3" class="portfolio-link" data-toggle="modal">
+						<div class="portfolio-hover">
+							<div class="portfolio-hover-content">
+								<i class="fa fa-plus fa-3x"></i>
+							</div>
+						</div> <img src="img/portfolio/CloudScale.png" class="img-responsive" alt="">
+					</a>
+					<div class="portfolio-caption">
+						<h4>Integration As A Service</h4>
+						<p class="text-muted">Pool of Coyote workers scales integration horizontally</p>
+					</div>
+				</div>
 			</div>
 		</div>
 	</section>
@@ -463,8 +476,7 @@
 		</div>
 	</footer>
 
-	<div class="portfolio-modal modal fade" id="solutionsModal1"
-		tabindex="-1" role="dialog" aria-hidden="true">
+	<div class="portfolio-modal modal fade" id="solutionsModal1" tabindex="-1" role="dialog" aria-hidden="true">
 		<div class="modal-dialog">
 			<div class="modal-content">
 				<div class="close-modal" data-dismiss="modal">
@@ -520,6 +532,42 @@
 								<p>Running CoyoteSN tools in CoyoteDX gives you the ability to implement bidirectional integrations with a few lines of a configuration file. You can make web service calls directly into the ServiceNow API and pull any data from any table and direct it to one or more target systems through not only flat files (CSV, XML and Fixed Field Length) but also through direct JDBC database and customized web service calls. You can even use other CoyoteDX modules to transform and write your ServiceNow data to other formats and systems.</p>
 								<p>It is now possible to safely exchange data with external business partners without having them directly access your ServiceNow instance. Easily pull data from ServiceNow tables and format it to your business partner specifications and send it to them using their native protocols. They don't need to interface with ServiceNow at all. You can also query your external partner data using their API and protocols to create records for posting to your ServiceNow instance meeting the needs and specification of your table structures. Bidirectional business partner integrations to ServiceNow using one tool is simpler and more reliable than passing CSV files around.</p>
 								<p>CoyoteSN allows you to implement integrations with ServiceNow in a few hours, not a few weeks (or months) and can be easily changed via configuration files which can be version controlled and managed by the operations staff. The developers only need to be involved when custom components are required.</p>
+								<p></p>
+								<ul class="list-inline">
+									<li><strong>Industries:</strong> Telecommunications, Electric Utility, Insurance, Finance</li>
+									<li><strong>Tools:</strong> Loader, DataFrame, DX, SN, Custom modules for custom operations</li>
+									<li><strong>Category:</strong> ITSM, Provisioning, Security, Monitoring</li>
+								</ul>
+								<button type="button" class="btn btn-primary"
+									data-dismiss="modal">
+									<i class="fa fa-times"></i> Close Solution
+								</button>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="portfolio-modal modal fade" id="solutionsModal3" tabindex="-1" role="dialog" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="close-modal" data-dismiss="modal">
+					<div class="lr">
+						<div class="rl"></div>
+					</div>
+				</div>
+				<div class="container">
+					<div class="row">
+						<div class="col-lg-8 col-lg-offset-2">
+							<div class="modal-body">
+								<h2>Integrations As A Service</h2>
+								<p class="item-intro text-muted">Run a pool of workers in your data center to scale integration horizontally.</p>
+								<img class="img-responsive img-centered" src="img/portfolio/CloudScale.png" alt="">
+								<p>Coyote Systems runs multiple workers in our cloud-based data center to handle read-transform-write (RTW) processing which scales a s demand changes. Each worker retrieves a job assignment from the job queue, pulls the job configuration and context data from cloud storage, instantiates a transform engine, then runs the transform configuration. Pre and Post processing tasks ensure the environment are initialized and cleaned-up when the job is run ensuring each worker starts with a pristine environment with no data leakage.</p>
+								<p>Data transfer jobs can be entered through the website or imported directly into the data store. These are the exact same jobs users created and ran locally; no modifications are required to run them in the cloud. This means each team can develop and debug their jobs locally and deploy them to the "cloud" when they are ready to productionalize their data transfers.</p>
+								<p>You can run a similar configuration in your data center with your own infrastructure, use our cloud, or your own cloud infrastructure, Coyote is cloud-agnostic and portable across a variety of hosting environments. This means you can provide secure data mediation services to the entire organization with one solution. Each data transfer job can be owned and maintained by different people or centrally administered.</p>
 								<p></p>
 								<ul class="list-inline">
 									<li><strong>Industries:</strong> Telecommunications, Electric Utility, Insurance, Finance</li>
