@@ -43,7 +43,7 @@
 	},
 
 	"Component": [
-		{"Class": "systems.coyote.CheckIn", "uri":"http://coyote.systems/api/checkin"}
+		{"Class": "coyote.demo.CheckIn", "uri":"http://coyote.systems/api/checkin"}
 	],
 
 	"Logging": {
