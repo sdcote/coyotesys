@@ -25,7 +25,7 @@
 		"Schedule": { "Minutes": "*/5" },
 		
 		"Reader" : {
-			"class" : "CSVReader",
+			"class" : "CsvReader",
 			"source" : "[#$app.home#]/demo/users.csv",
 			"header" : true
 		},
