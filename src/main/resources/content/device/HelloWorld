@@ -1,0 +1,23 @@
+{
+	"Class": "coyote.dx.Job",
+
+	"Job": {
+		"Name": "HelloWorld",
+
+		"Reader": {
+			"class": "StaticReader", 
+			"fields" : {
+				"Message": "Hello World!",
+				"Message2": "From Coyote"
+			}
+		},
+
+		"Writer": {
+			"class": "ConsoleWriter", 
+			"format": "json",
+			"indent": true
+		}
+
+	}
+
+}
